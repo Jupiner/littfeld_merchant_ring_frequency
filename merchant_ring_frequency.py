@@ -28,15 +28,16 @@ class Store:
         
         
     def select_random_weekends(self, year, month, num_weekends):
-        """given a year, month and number of weeks returns a list of num_weekends number of random sample tuples of the start and end each weekend
+        """returns a random sample list of num_weekends number of tuples containing the days (i.e. 15, 21 etc.) of the start and end of each weekend 
 
         Args:
-            year (datetime.year): YYYY
-            month (datetime.month): MM
-            num_weekends (int): int
+            year (datetime.year): the year of an availability period
+            month (datetime.month): the month of an availability period
+            num_weekends (int): number of weeks availabile within an availability frequency
+
 
         Returns:
-            list: [(weekend_start1, weekend_end1), ... (weekend_startn, weekend_endn)]
+            list: [(weekend_start_1, weekend_end_1), ... (weekend_start_n, weekend_end_n)]
         """
         weekends = []
         day = date(year, month, 1)
@@ -49,15 +50,15 @@ class Store:
         return random.sample(weekends, num_weekends) if len(weekends) >= num_weekends else weekends
     
     def select_random_weeks(self, year, month, num_weeks):
-        """given a year, month and number of weeks returns a list of num_weeks number of random sample tuples of the start and end each week
+        """returns a random sample list of num_weeks number of tuples containing the days (i.e. 15, 21 etc.) of the start and end of each week 
 
         Args:
-            year (datetime.year): YYYY
-            month (datetime.month): MM
-            num_weeks (int): int
+            year (datetime.year): the year of an availability period
+            month (datetime.month): the month of an availability period
+            num_weeks (int): number of weeks availabile within an availability frequency
 
         Returns:
-            list: [(week_start1, week_end1), ... (week_startn, week_endn)]
+            list: [(week_start_1, week_end_1), ... (week_start_n, week_end_n)]
         """
         weeks = []
         day = date(year, month, 1)
@@ -70,15 +71,15 @@ class Store:
         return random.sample(weeks, num_weeks) if len(weeks) >= num_weeks else weeks
     
     def select_weeks_in_period(self, start_date, end_date, num_weeks):
-        """returns a list
+        """returns a random sample list of num_weeks number of tuples containing the datetime objects of the start and end of weeks
 
         Args:
-            start_date (_type_): _description_
-            end_date (_type_): _description_
-            num_weeks (_type_): _description_
+            start_date (datetime): start of an availability period
+            end_date (datetime): end of an availability period
+            num_weeks (int): number of weeks available within a availability frequency
 
         Returns:
-            _type_: _description_
+            list: [(year_1, month_1, day_1), ..., (year_n, month_n, day_n)]
         """
         weeks = []
         day = start_date
@@ -86,7 +87,7 @@ class Store:
             if day.weekday() == 0:
                 week_end = day + timedelta(days=6)
                 if week_end.month <= end_date.month:
-                    weeks.append((day.day, week_end.day))
+                    weeks.append((day, week_end))
             day += timedelta(days=1)
         return random.sample(weeks, num_weeks) if len(weeks) >= num_weeks else weeks
         
@@ -112,7 +113,7 @@ class Store:
         """given a datetime, returns TRUE or FALSE based on the availability pattern of a Store object 
 
         Args:
-            current_date (datetime): YYYY-MM-DD
+            current_date (datetime): the current date
 
         Returns:
             boolean: TRUE/FALSE
@@ -129,7 +130,7 @@ class Store:
             period_end = (period_start + relativedelta(months=months+1)) - relativedelta(days=1)            
             on_weeks = self.select_weeks_in_period(period_start, period_end, weeks)
             for week_start, week_end in on_weeks:
-                if week_start <= current_date.day <= week_end:
+                if week_start <= current_date <= week_end:
                     return True
             return False
         elif pattern == "leaves for 1 month each season":
@@ -162,7 +163,7 @@ class Store:
             return ((current_date - date(current_date.year, 1, 1)).days // 7) % 2 == 0
         return False
 
-# List of stores and their availability patterns and page numbers
+# List of stores, their availability patterns and page numbers
 stores = [
     Store("Morris's Miscibles", "1 week every 3 months", 39),
     Store("Gallery of Curios", "1 week every 2 months", 40),
@@ -186,10 +187,10 @@ def list_available_stores(current_date):
     """given a date will check the availability from a list of stores
 
     Args:
-        current_date (datetime): YYYY-MM-DD
+        current_date (datetime): current date
 
     Returns:
-        list: [(store_name1, store_page1), ... (store_namen, store_pagen)]
+        list: [(store_name_1, store_page_1), ... (store_name_n, store_page_n)]
     """
     available_stores = [(store.name, store.page) for store in stores if store.is_available(current_date)]
     return available_stores
