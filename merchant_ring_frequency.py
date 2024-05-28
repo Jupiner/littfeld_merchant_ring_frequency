@@ -1,5 +1,5 @@
 # merchant_ring_frequency.py
-# A little program which calculates which Littfield shop wagons are available given a date
+# A little program that calculates which Littfeld shop wagons are currently available based on a given date.
     
     
 import random
