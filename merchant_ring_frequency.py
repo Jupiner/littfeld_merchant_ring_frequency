@@ -21,7 +21,7 @@ class Store:
             self.random_leave_months = self.select_season_leave_months()
         if "2 weekends a month" in availability_pattern:
             self.random_weekends = self.select_random_weekends(datetime.now().year, datetime.now().month, 2)
-        if "One week a month, except in winter" in availability_pattern:
+        if "1 week a month, except in winter" in availability_pattern:
             self.random_weeks = self.select_random_weeks(datetime.now().year, datetime.now().month, 1)
         if "leaves 1 week every month" in availability_pattern:
             self.random_weeks = self.select_random_weeks(datetime.now().year, datetime.now().month, 1)
@@ -147,7 +147,7 @@ class Store:
                 weekend_start, weekend_end = self.random_weekends[0]
                 return not (current_date.weekday() >= 5 and weekend_start <= current_date.day <= weekend_end)
             return True # if no valid week found, assume available
-        elif pattern == "One week a month, except in winter":
+        elif pattern == "1 week a month, except in winter":
             if current_date.month in [12, 1, 2]:  # Winter
                 return False
             if self.random_weeks:
@@ -159,7 +159,7 @@ class Store:
                 week_start, week_end = self.random_weeks[0]
                 return not (week_start <= current_date.day <= week_end)
             return True # if no valid week found, assume available
-        elif pattern == "Every other week":
+        elif pattern == "every other week":
             return ((current_date - date(current_date.year, 1, 1)).days // 7) % 2 == 0
         return False
 
@@ -173,9 +173,9 @@ stores = [
     Store("Chunky's Pet Pals", "always", 45),
     Store("Hugo's Lifesavers", "always", 45),
     Store("Brauniard's Auctions", "2 weeks every 1 month", 46),
-    Store("Bard's Magical Secret", "One week a month, except in winter", 46),
+    Store("Bard's Magical Secret", "1 week a month, except in winter", 46),
     Store("House of Fineries", "2 weeks every 3 months", 47),
-    Store("Lucas and Grier's", "Every other week", 47),
+    Store("Lucas and Grier's", "every other week", 47),
     Store("Mutya's This n That", "leaves 1 week every month", 49),
     Store("Angeline's Forgewagon", "leaves 1 week every month", 50),
     Store("Ayvaire's Nest", "always", 50),
