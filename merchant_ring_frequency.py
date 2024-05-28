@@ -18,7 +18,7 @@ class Store:
         if "leaves 1 weekend a month" in availability_pattern:
             self.random_weekend = self.select_random_weekends(datetime.now().year, datetime.now().month, 1)
         if "leaves for 1 month each season" in availability_pattern:
-            self.random_leave_months = self.select_random_leave_months()
+            self.random_leave_months = self.select_season_leave_months()
         if "2 weekends a month" in availability_pattern:
             self.random_weekends = self.select_random_weekends(datetime.now().year, datetime.now().month, 2)
         if "One week a month, except in winter" in availability_pattern:
@@ -92,7 +92,7 @@ class Store:
         return random.sample(weeks, num_weeks) if len(weeks) >= num_weeks else weeks
         
     
-    def select_random_leave_months(self):
+    def select_season_leave_months(self):
         """Selects 1 random month from each season
 
         Returns:
