@@ -192,8 +192,8 @@ def list_available_stores(current_date):
     Returns:
         list: [(store_name_1, store_page_1), ... (store_name_n, store_page_n)]
     """
-    available_stores = [(store.name, store.page) for store in stores if store.is_available(current_date)]
-    return available_stores
+    return [(store.name, store.page) for store in stores if store.is_available(current_date)]
+    
 
 def get_user_date():
     while True:
