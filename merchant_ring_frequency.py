@@ -5,6 +5,7 @@
 import random
 import re
 from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 
 class Store:
     def __init__(self, name, availability_pattern, page):
@@ -67,8 +68,28 @@ class Store:
                     weeks.append((day.day, week_end.day))
             day += timedelta(days=1)
         return random.sample(weeks, num_weeks) if len(weeks) >= num_weeks else weeks
-                
-          
+    
+    def select_weeks_in_period(self, start_date, end_date, num_weeks):
+        """returns a list
+
+        Args:
+            start_date (_type_): _description_
+            end_date (_type_): _description_
+            num_weeks (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        weeks = []
+        day = start_date
+        while start_date <= day <= end_date:
+            if day.weekday() == 0:
+                week_end = day + timedelta(days=6)
+                if week_end.month <= end_date.month:
+                    weeks.append((day.day, week_end.day))
+            day += timedelta(days=1)
+        return random.sample(weeks, num_weeks) if len(weeks) >= num_weeks else weeks
+        
     
     def select_random_leave_months(self):
         """Selects 1 random month from each season
@@ -105,12 +126,11 @@ class Store:
         elif match := re.match(r"(\d+) weeks? every (\d+) months?", pattern):
             weeks, months = map(int, match.groups())
             period_start = date(current_date.year, 1 + ((current_date.month - 1) // months) * months, 1)
-            period_end = date(current_date.year, 1 + ((current_date.month - 1) // months) * months + months, 1)
-            if period_start <= current_date < period_end:
-                on_weeks = self.select_random_weeks(current_date.year, current_date.month, weeks)
-                for week_start, week_end in on_weeks:
-                    if week_start <= current_date.day <= week_end:
-                        return True
+            period_end = (period_start + relativedelta(months=months+1)) - relativedelta(days=1)            
+            on_weeks = self.select_weeks_in_period(period_start, period_end, weeks)
+            for week_start, week_end in on_weeks:
+                if week_start <= current_date.day <= week_end:
+                    return True
             return False
         elif pattern == "leaves for 1 month each season":
             if current_date.month in self.random_leave_months:
@@ -153,7 +173,7 @@ stores = [
     Store("Hugo's Lifesavers", "always", 45),
     Store("Brauniard's Auctions", "2 weeks every 1 month", 46),
     Store("Bard's Magical Secret", "One week a month, except in winter", 46),
-    Store("House of Fineries", "Two weeks every three months", 47),
+    Store("House of Fineries", "2 weeks every 3 months", 47),
     Store("Lucas and Grier's", "Every other week", 47),
     Store("Mutya's This n That", "leaves 1 week every month", 49),
     Store("Angeline's Forgewagon", "leaves 1 week every month", 50),
